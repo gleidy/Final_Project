@@ -8,57 +8,35 @@ class UsersDAO {
 	function UsersDAO($DBMngr) {
 		$this->dbManager = $DBMngr;
 	}
-	function getUsers() {
-		$sql = "SELECT * FROM users ORDER BY name;";
-		
-		$stmt = $this->dbManager->prepareQuery($sql);
-		$this->dbManager->executeQuery($stmt);
-		$arrayOfResults = $this->dbManager->fetchResults ( $stmt );
-		return $arrayOfResults;
-	}
-	function getUsersByID($IDValue){
-		$sql = "SELECT id, firstname, lastname, email ";
+	public function get($id = null) {
+		$sql = "SELECT * ";
 		$sql .= "FROM users ";
-		$sql .= "WHERE id = ?";
-		$sql .= "ORDER BY name;";
+		if ($id != null)
+			$sql .= "WHERE users.id=? ";
+		$sql .= "ORDER BY users.name ";
 		
-		$stmt = $this->dbManager->prepareQuery($sql);
-		$this->dbManager->bindValue($stmt, 1,$IDValue,$this->dbManager->INT_TYPE);
+		$stmt = $this->dbManager->prepareQuery ( $sql );
+		$this->dbManager->bindValue ( $stmt, 1, $id, $this->dbManager->INT_TYPE );
+		$this->dbManager->executeQuery ( $stmt );
+		$rows = $this->dbManager->fetchResults ( $stmt );
 		
-		$this->dbManager->executeQuery ($stmt);
-		$arrayOfResults = $this->dbManager->fetchResults ( $stmt );
-		return $arrayOfResults;
-		
+		return ($rows);
 	}
-	
-	function insertUser($parametersArray) {
-		//create an INSERT INTO sql statement (reads the parametersArray - this contains the fields submitted in the HTML5 form
+	public function insert($parametersArray) {
+		// insertion assumes that all the required parameters are defined and set
+		$sql = "INSERT INTO users (name, surname, email, password) ";
+		$sql .= "VALUES (?,?,?,?) ";
 		
-		$sql = "INSERT INTO `users` (`name`, `surname`, `email`,`password`) ";
-		$sql .= " VALUES (?,?,?,?);";
+		$stmt = $this->dbManager->prepareQuery ( $sql );
+		$this->dbManager->bindValue ( $stmt, 1, $parametersArray ["name"], $this->dbManager->STRING_TYPE );
+		$this->dbManager->bindValue ( $stmt, 2, $parametersArray ["surname"], $this->dbManager->STRING_TYPE );
+		$this->dbManager->bindValue ( $stmt, 3, $parametersArray ["email"], $this->dbManager->STRING_TYPE );
+		$this->dbManager->bindValue ( $stmt, 4, $parametersArray ["password"], $this->dbManager->STRING_TYPE );
+		$this->dbManager->executeQuery ( $stmt );
 		
-		$stmt = $this->dbManager->prepareQuery($sql);
-		$this->dbManager->bindValue($stmt, 1,$parametersArray["firstname"],$this->dbManager->STRING_TYPE);
-		$this->dbManager->bindValue($stmt, 2,$parametersArray["lastname"],$this->dbManager->STRING_TYPE);
-		$this->dbManager->bindValue($stmt, 3,$parametersArray["email"],$this->dbManager->STRING_TYPE);
-		$this->dbManager->bindValue($stmt, 4,$parametersArray["password"],$this->dbManager->STRING_TYPE);
-		
-		//execute the query
-		$this->dbManager->executeQuery ($stmt);
-		
+		return ($this->dbManager->getLastInsertedID ());
 	}
-	
-	function deleteUser($IDValue){
-		
-		$sql = "DELETE FROM `users` ";
-		$sql .= "WHERE id = ?";
-		
-		$stmt = $this->dbManager->prepareQuery($sql);
-		$this->dbManager->bindValue($stmt, 1,$IDValue,$this->dbManager->INT_TYPE);
-		//execute the query
-		$this->dbManager->executeQuery ($stmt);
-	}
-	function updateUser($IDValue, $parametersArray){
+	public function update($parametersArray, $userID) {
 		$sql = "UPDATE `users` SET ";
 		
 		switch(key($parametersArray)){			
@@ -98,8 +76,32 @@ class UsersDAO {
 			$this->dbManager->bindValue($stmt, 2,$IDValue,$this->dbManager->INT_TYPE);
 				
 			break;
-		}
+		}	
+	}
+	public function delete($userID) {
+		$sql = "DELETE FROM `users` ";
+		$sql .= "WHERE id = ?";
+		
+		$stmt = $this->dbManager->prepareQuery($sql);
+		$this->dbManager->bindValue($stmt, 1,$IDValue,$this->dbManager->INT_TYPE);
+		//execute the query
 		$this->dbManager->executeQuery ($stmt);
+	}
+	public function search($str) {
+		$sql = "SELECT * ";
+		$sql .= "FROM users ";
+		if ($id != null)
+			$sql .= "WHERE users.name LIKE (?) ";
+		$sql .= "ORDER BY users.name ";
+		
+		$wild = "%" . $str ."%";
+		
+		$stmt = $this->dbManager->prepareQuery ( $sql );
+		$this->dbManager->bindValue ( $stmt, 1, $wild, $this->dbManager->STRING_TYPE );
+		$this->dbManager->executeQuery ( $stmt );
+		$rows = $this->dbManager->fetchResults ( $stmt );
+		
+		return ($rows);
 	}
 }
 ?>

@@ -6,21 +6,36 @@ $app = new \Slim\Slim (); // slim run-time object
 
 require_once "conf/config.inc.php";
 
-$app->map ( "/users(/:id)", function ($userID = null) use($app) {
+function authenticate(\Slim\Route $route){
+	
+	$app = \Slim\Slim::getInstance();
+	
+	$header = $app->response->headers;
+	
+	if(!empty($header["username"]) && !empty($header["password"])){
+		$username = $header["username"];
+		$password = $header["password"];
+	}
+	
+	//auth success
+	return true;
+	//auth fail
+	$app->halt(HTTPSTATUS_UNAUTHORIZED);
+}
+
+$app->map ( "/users(/:id)", "authenticate", function ($userID = null) use($app) {
 	
 	$httpMethod = $app->request->getMethod ();
 	$action = null;
 	$parameters ["id"] = $userID; // prepare parameters to be passed to the controller (example: ID)
 	
-	if (($userID == null) or is_numeric ( $userID ) or ctype_alpha($userID)) {
+	if (($userID == null) or is_numeric ( $userID )) {
 		switch ($httpMethod) {
 			case "GET" :
 				if ($userID != null)
 					$action = ACTION_GET_USER;
-				elseif (is_numeric ( $userID ))
-					$action = ACTION_GET_USERS;
 				else
-					$action = ACTION_SEARCH_USERS;
+					$action = ACTION_GET_USERS;
 				break;
 			case "POST" :
 				$action = ACTION_CREATE_USER;
