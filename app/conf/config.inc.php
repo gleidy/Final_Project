@@ -4,17 +4,26 @@ define("DB_HOST", "localhost" ); 		// set database host
 define("DB_USER", "root" ); 			// set database user
 define("DB_PASS", "" ); 				// set database password
 define("DB_PORT", 3306);				// set database port
-define("DB_NAME", "luca" ); 			// set database name
+define("DB_NAME", "project" ); 			// set database name
 define("DB_CHARSET", "utf8" ); 			// set database charset
 define("DB_DEBUGMODE", true ); 			// set database charset
 
 /* actions for the USERS REST resource */
+/*
 define("ACTION_GET_USER", 33);
 define("ACTION_GET_USERS", 44);
 define("ACTION_CREATE_USER", 55);
 define("ACTION_UPDATE_USER", 66);
 define("ACTION_DELETE_USER", 77);
 define("ACTION_SEARCH_USERS", 88);
+*/
+/*actions for the TICKET REST resource*/
+define("ACTION_GET_TICKET", 33);
+define("ACTION_GET_TICKETS", 44);
+define("ACTION_CREATE_TICKET", 55);
+define("ACTION_UPDATE_TICKET", 66);
+define("ACTION_DELETE_TICKET", 77);
+define("ACTION_SEARCH_TICKETS", 88);
 
 /* HTTP status codes 2xx*/
 define("HTTPSTATUS_OK", 200);

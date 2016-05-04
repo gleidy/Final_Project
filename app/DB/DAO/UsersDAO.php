@@ -1,35 +1,28 @@
 <?php
-/**
- * @author Luca
- * definition of the User DAO (database access object)
- */
+
 class UsersDAO {
 	private $dbManager;
 	function UsersDAO($DBMngr) {
 		$this->dbManager = $DBMngr;
 	}
-	public function get($id = null) {
-		$sql = "SELECT * ";
-		$sql .= "FROM users ";
-		if ($id != null)
-			$sql .= "WHERE users.id=? ";
-		$sql .= "ORDER BY users.name ";
+	public function get($id) {
+		$sql = "SELECT `user_id`, `password` FROM `users` WHERE `user_id` = ?";
 		
-		$stmt = $this->dbManager->prepareQuery ( $sql );
-		$this->dbManager->bindValue ( $stmt, 1, $id, $this->dbManager->INT_TYPE );
+		$stmt = $this->dbManager->prepareQuery( $sql );
+		$this->dbManager->bindValue ( $stmt, 1, $id, $this->dbManager->STRING_TYPE );
 		$this->dbManager->executeQuery ( $stmt );
 		$rows = $this->dbManager->fetchResults ( $stmt );
 		
 		return ($rows);
 	}
-	public function insert($parametersArray) {
+/*	public function insert($parametersArray) {
 		// insertion assumes that all the required parameters are defined and set
-		$sql = "INSERT INTO users (name, surname, email, password) ";
+		$sql = "INSERT INTO users (first_name, last_name, email, password) ";
 		$sql .= "VALUES (?,?,?,?) ";
 		
 		$stmt = $this->dbManager->prepareQuery ( $sql );
-		$this->dbManager->bindValue ( $stmt, 1, $parametersArray ["name"], $this->dbManager->STRING_TYPE );
-		$this->dbManager->bindValue ( $stmt, 2, $parametersArray ["surname"], $this->dbManager->STRING_TYPE );
+		$this->dbManager->bindValue ( $stmt, 1, $parametersArray ["first"], $this->dbManager->STRING_TYPE );
+		$this->dbManager->bindValue ( $stmt, 2, $parametersArray ["last"], $this->dbManager->STRING_TYPE );
 		$this->dbManager->bindValue ( $stmt, 3, $parametersArray ["email"], $this->dbManager->STRING_TYPE );
 		$this->dbManager->bindValue ( $stmt, 4, $parametersArray ["password"], $this->dbManager->STRING_TYPE );
 		$this->dbManager->executeQuery ( $stmt );
@@ -88,11 +81,11 @@ class UsersDAO {
 		$this->dbManager->executeQuery ($stmt);
 	}
 	public function search($str) {
-		$sql = "SELECT * ";
+		$sql = "SELECT users.user_id ";
 		$sql .= "FROM users ";
 		if ($id != null)
-			$sql .= "WHERE users.name LIKE (?) ";
-		$sql .= "ORDER BY users.name ";
+			$sql .= "WHERE users.email LIKE (?) ";
+		$sql .= "ORDER BY users.user_id ";
 		
 		$wild = "%" . $str ."%";
 		
@@ -102,6 +95,6 @@ class UsersDAO {
 		$rows = $this->dbManager->fetchResults ( $stmt );
 		
 		return ($rows);
-	}
+	}*/
 }
 ?>
